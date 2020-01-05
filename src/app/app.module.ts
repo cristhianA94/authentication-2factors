@@ -24,9 +24,12 @@ import { environment } from '../environments/environment';
 // Auth service
 import { AuthService } from "./shared/services/auth.service";
 
-// Toastr
+//Material
+import { MaterialModule } from './material.module';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+// Toastr
 import { ToastrModule } from "ngx-toastr";
+
 
 
 @NgModule({
@@ -50,7 +53,8 @@ import { ToastrModule } from "ngx-toastr";
       timeOut: 10000,
       positionClass: 'toast-bottom-right',
       preventDuplicates: true,
-    })
+    }),
+    MaterialModule
   ],
   providers: [AuthService],
   bootstrap: [AppComponent]
