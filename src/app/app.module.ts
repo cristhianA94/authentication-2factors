@@ -25,6 +25,7 @@ import { environment } from '../environments/environment';
 import { AuthService } from "./shared/services/auth.service";
 
 // Toastr
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ToastrModule } from "ngx-toastr";
 
 
@@ -44,7 +45,12 @@ import { ToastrModule } from "ngx-toastr";
     AngularFireAuthModule,
     AngularFirestoreModule,
     ReactiveFormsModule,
-    ToastrModule.forRoot()
+    BrowserAnimationsModule,
+    ToastrModule.forRoot({
+      timeOut: 10000,
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
+    })
   ],
   providers: [AuthService],
   bootstrap: [AppComponent]

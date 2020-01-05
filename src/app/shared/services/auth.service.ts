@@ -1,11 +1,13 @@
 import { Injectable, NgZone } from '@angular/core';
-import { User } from "../services/user";
-import { auth } from 'firebase/app';
-import { AngularFireAuth } from "@angular/fire/auth";
-import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { Router } from "@angular/router";
 
+import { AngularFireAuth } from "@angular/fire/auth";
+import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
+import { auth } from 'firebase/app';
+
 import { ToastrService } from 'ngx-toastr';
+
+import { User } from "../services/user";
 
 @Injectable({
   providedIn: 'root'
@@ -21,8 +23,8 @@ export class AuthService {
     private toastr: ToastrService,
     public ngZone: NgZone // NgZone service to remove outside scope warning
   ) {
-    /* Saving user data in localstorage when 
-    logged in and setting up null when logged out */
+    /* Guarda los datos del usuario localmente al logearse o registrarse, 
+    se destruye el objeto cuando cierra sesion */
     this.afAuth.authState.subscribe(user => {
       if (user) {
         this.userData = user;
@@ -35,6 +37,7 @@ export class AuthService {
     })
   }
 
+  // Mensajes de alerta
   mensajeExito(titulo, mensaje) {
     this.toastr.success(mensaje, titulo);
   }
@@ -47,6 +50,7 @@ export class AuthService {
     return this.afAuth.auth.signInWithEmailAndPassword(email, password)
       .then((result) => {
         this.ngZone.run(() => {
+          this.mensajeExito('¡Bienvenido!', '');
           this.router.navigate(['dashboard']);
         });
         this.SetUserData(result.user);
@@ -59,16 +63,16 @@ export class AuthService {
   SignUp(email, password) {
     return this.afAuth.auth.createUserWithEmailAndPassword(email, password)
       .then((result) => {
-        /* Call the SendVerificaitonMail() function when new user sign 
-        up and returns promise */
+        /* Envia un correo para verificar la cuenta nueva */
         this.SendVerificationMail();
         this.SetUserData(result.user);
+        this.mensajeExito('¡Exito!', 'Usuario registrado correctamente, verifica tu email para completar el registro');
       }).catch((error) => {
-        window.alert(error.message)
+        this.mensajeError('Error', error);
       })
   }
 
-  // Send email verfificaiton when new user sign up
+  // Envia email de verificacion de registro
   SendVerificationMail() {
     return this.afAuth.auth.currentUser.sendEmailVerification()
       .then(() => {
@@ -76,23 +80,23 @@ export class AuthService {
       })
   }
 
-  // Reset Forggot password
+  // Resetea password
   ForgotPassword(passwordResetEmail) {
     return this.afAuth.auth.sendPasswordResetEmail(passwordResetEmail)
       .then(() => {
         window.alert('Se ha enviado un email, su contraseña ha sido reseteada, revise su bandeja de entrada.');
       }).catch((error) => {
-        window.alert(error)
+        this.mensajeError('Error', error);
       })
   }
 
-  // Returns true when user is looged in and email is verified
+  // Returna true cuando el usuario esta logeado
   get isLoggedIn(): boolean {
     const user = JSON.parse(localStorage.getItem('user'));
     return (user !== null && user.emailVerified !== false) ? true : false;
   }
 
-  // Sign in with Google
+  // Log in with Google
   GoogleAuth() {
     return this.AuthLogin(new auth.GoogleAuthProvider());
   }
@@ -106,7 +110,7 @@ export class AuthService {
         })
         this.SetUserData(result.user);
       }).catch((error) => {
-        window.alert(error)
+        this.mensajeError('Error', error);
       })
   }
 
