@@ -2,12 +2,20 @@ import { Injectable, NgZone } from '@angular/core';
 import { Router } from "@angular/router";
 
 import { AngularFireAuth } from "@angular/fire/auth";
-import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
+import {
+  AngularFirestore,
+  AngularFirestoreDocument,
+  AngularFirestoreCollection
+}
+  from '@angular/fire/firestore';
 import { auth } from 'firebase/app';
 
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 
-import { User } from "../services/user";
+import { User } from "./user";
+import { Rol } from "./rol";
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +23,17 @@ import { User } from "../services/user";
 
 export class AuthService {
   userData: any; // Save logged in user data
+
+  usuarioCollection: AngularFirestoreCollection<User>;
+  usuarioDoc: AngularFirestoreDocument<User>;
+  usuarios: Observable<User[]>;
+  usuario: Observable<User>;
+
+  rolCollection: AngularFirestoreCollection<Rol>;
+  rolDoc: AngularFirestoreDocument<Rol>;
+  roles: Observable<Rol[]>;
+  rol: Observable<Rol>;
+  public rolSelect: string;
 
   constructor(
     public afs: AngularFirestore,   // Inject Firestore service
@@ -35,6 +54,7 @@ export class AuthService {
         JSON.parse(localStorage.getItem('user'));
       }
     })
+    this.getRoles();
   }
 
   // Mensajes de alerta
@@ -45,27 +65,38 @@ export class AuthService {
     this.toastr.error(mensaje, titulo);
   }
 
+  getAuth() {
+    return this.afAuth.authState;
+  }
+
+  // Registro con email/password
+  RolSelect(form) {
+    this.rolSelect = form.rol;
+    return this.rolSelect;
+  }
+
   // Logeo con email/password
-  SignIn(email, password) {
-    return this.afAuth.auth.signInWithEmailAndPassword(email, password)
+  SignIn(form) {
+    return this.afAuth.auth.signInWithEmailAndPassword(form.correo, form.pass)
       .then((result) => {
         this.ngZone.run(() => {
           this.mensajeExito('¡Bienvenido!', '');
           this.router.navigate(['dashboard']);
         });
-        this.SetUserData(result.user);
+        //this.SetUserData(result.user);
       }).catch((error) => {
         this.mensajeError('Error', error);
       })
   }
 
+
   // Registro con email/password
-  SignUp(email, password) {
-    return this.afAuth.auth.createUserWithEmailAndPassword(email, password)
+  SignUp(form) {
+    return this.afAuth.auth.createUserWithEmailAndPassword(form.correo, form.pass)
       .then((result) => {
         /* Envia un correo para verificar la cuenta nueva */
         this.SendVerificationMail();
-        this.SetUserData(result.user);
+        this.SetUserData(result.user, form);
         this.mensajeExito('¡Exito!', 'Usuario registrado correctamente, verifica tu email para completar el registro');
       }).catch((error) => {
         this.mensajeError('Error', error);
@@ -96,43 +127,65 @@ export class AuthService {
     return (user !== null && user.emailVerified !== false) ? true : false;
   }
 
-  // Log in with Google
-  GoogleAuth() {
-    return this.AuthLogin(new auth.GoogleAuthProvider());
-  }
-
-  // Auth logic to run auth providers
-  AuthLogin(provider) {
-    return this.afAuth.auth.signInWithPopup(provider)
-      .then((result) => {
-        this.ngZone.run(() => {
-          this.router.navigate(['dashboard']);
-        })
-        this.SetUserData(result.user);
-      }).catch((error) => {
-        this.mensajeError('Error', error);
-      })
-  }
 
   /* Recoge los datos del usuario y los guarda en el objeto User */
-  SetUserData(user) {
-    const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${user.uid}`);
+  SetUserData(user, form?) {
+    const userRef: AngularFirestoreDocument<User> = this.afs.doc(`users/${user.uid}`);
     const userData: User = {
       uid: user.uid,
-      email: user.email,
-      displayName: user.displayName,
+      correo: user.email,
+      name: form.name,
+      lastname: form.lastname,
       photoURL: user.photoURL,
-      emailVerified: user.emailVerified
+      pin: form.pin,
+      rol: form.rol
     }
     return userRef.set(userData, { merge: true })
   }
 
-  // Sign out 
+
+  // Sign out
   SignOut() {
     return this.afAuth.auth.signOut().then(() => {
       localStorage.removeItem('user');
       this.router.navigate(['sign-in']);
     })
+  }
+
+  /*                        USER                   */
+
+  rolUser(uid) {
+    return this.afs.doc<User>(`users/${uid}`).snapshotChanges();
+  }
+
+
+  //Obtiene un usuario
+  getUser(uid) {
+    this.usuarioDoc = this.afs.doc<User>(`users/${uid}`);
+    return this.usuario = this.usuarioDoc.snapshotChanges().pipe(
+      map(action => {
+        if (action.payload.exists === false) {
+          return null;
+        } else {
+          const data = action.payload.data() as User;
+          data.uid = action.payload.id;
+          return data;
+        }
+      }));
+  }
+
+  /*                        ROLES                           */
+  //Obtiene un rol
+  getRoles() {
+    // Obtiene todos los roles
+    this.rolCollection = this.afs.collection('rol');
+    this.roles = this.rolCollection.snapshotChanges().pipe(map(actions => {
+      return actions.map(a => {
+        const data = a.payload.doc.data() as Rol;
+        data.id = a.payload.doc.id;
+        return data;
+      })
+    }));
   }
 
 }

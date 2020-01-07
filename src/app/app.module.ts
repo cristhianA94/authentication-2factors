@@ -9,6 +9,7 @@ import { AppRoutingModule } from './shared/routing/app-routing.module';
 
 // App components
 import { AppComponent } from './app.component';
+import { RolsComponent } from './components/rols/rols.component';
 import { SignInComponent } from './components/sign-in/sign-in.component';
 import { SignUpComponent } from './components/sign-up/sign-up.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
@@ -27,6 +28,11 @@ import { AuthService } from "./shared/services/auth.service";
 //Material
 import { MaterialModule } from './material.module';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { MatPasswordStrengthModule } from '@angular-material-extensions/password-strength';
+
+import { ModalModule } from 'ngx-bootstrap/modal';
+
+
 // Toastr
 import { ToastrModule } from "ngx-toastr";
 
@@ -35,6 +41,7 @@ import { ToastrModule } from "ngx-toastr";
 @NgModule({
   declarations: [
     AppComponent,
+    RolsComponent,
     SignInComponent,
     SignUpComponent,
     DashboardComponent,
@@ -54,7 +61,9 @@ import { ToastrModule } from "ngx-toastr";
       positionClass: 'toast-bottom-right',
       preventDuplicates: true,
     }),
-    MaterialModule
+    MaterialModule,
+    MatPasswordStrengthModule.forRoot(),
+    ModalModule.forRoot()
   ],
   providers: [AuthService],
   bootstrap: [AppComponent]

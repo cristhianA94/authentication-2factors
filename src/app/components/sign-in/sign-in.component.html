@@ -3,38 +3,32 @@
 
         <div class="authBlock">
             <h3>Log in</h3>
-            <div class="formGroup">
-                <input type="text" class="formControl" placeholder="Username" #userName required>
-            </div>
 
-            <div class="formGroup">
-                <input type="password" class="formControl" placeholder="Password" #userPassword required>
-            </div>
+            <form class="example-container mt-4" [formGroup]="loginForm" (ngSubmit)="login()" autocomplete="on">
 
-            <!-- Calling SignIn Api from AuthService -->
-            <div class="formGroup">
-                <input type="button" class="btn btnPrimary" value="Log in" (click)="authService.SignIn(userName.value, userPassword.value)">
-            </div>
 
-            <div class="formGroup">
-                <span class="or"><span class="orInner">Or</span></span>
-            </div>
+                <mat-form-field appearance="outline">
+                    <mat-label>Correo</mat-label>
+                    <input matInput type="email" formControlName="correo" required>
+                    <mat-icon matSuffix>email</mat-icon>
+                </mat-form-field>
 
-            <!-- Calling GoogleAuth Api from AuthService -->
-            <div class="formGroup">
-                <button type="button" class="btn googleBtn" (click)="authService.GoogleAuth()">
-                <i class="fab fa-google-plus-g"></i>
-                Log in with Google
-                </button>
-            </div>
+                <mat-form-field appearance="outline">
+                    <mat-label>Password</mat-label>
+                    <mat-pass-toggle-visibility #toggleVisbility2 matSuffix>
+                    </mat-pass-toggle-visibility>
+                    <input matInput #password2 formControlName="pass" type="password" [type]="toggleVisbility2.type">
+                </mat-form-field>
 
-            <div class="forgotPassword">
-                <span routerLink="/forgot-password">¿Olvidaste la contraseña?</span>
-            </div>
-        </div>
+                <!-- Boton Registro-->
+                <mat-card-actions>
+                    <button class="btn btn-success btn-block" type="submit" [disabled]="!loginForm.valid">Ingresar</button>
+                </mat-card-actions>
 
-        <div class="redirectToLogin">
-            <span>¿No tienes una cuenta aún? <span class="redirect" routerLink="/register-user"> Registrate</span></span>
+                <div class="forgotPassword">
+                    <span routerLink="/forgot-password">¿Olvidaste la contraseña?</span>
+                </div>
+            </form>
         </div>
 
     </div>

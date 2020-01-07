@@ -36,18 +36,226 @@
                     <h1 class="h2">Perfil Usuario</h1>
                 </div>
                 <!-- Show user data when logged in -->
-                <div class="row" *ngIf="authService.userData as user">
+                <div class="row" *ngIf="userList[0] as user">
                     <div class="col-md-12">
                         <div class="media">
-                            <img class="align-self-start mr-5 img-thumbnail rounded-circle" src="{{(user.photoURL) ? user.photoURL : '/assets/dummy-user.png'}}" alt="{{user.displayName}}">
+                            <img class="align-self-start mr-5 img-thumbnail rounded-circle" src="{{(userList[0].photoURL) ? userList[0].photoURL : '/assets/dummy-user.png'}}" alt="{{userList[0].name}}">
                             <div class="media-body">
-                                <h1>Hello: <strong>{{(user.displayName) ? user.displayName : 'Usuario'}}</strong></h1>
-                                <p>User ID: <strong>{{user.uid}}</strong></p>
-                                <p>Email: <strong>{{user.email}}</strong></p>
-                                <p>Email Verified: <strong>{{user.emailVerified}}</strong></p>
+                                <h1>Hola: <strong>{{ userList[0].name + " " + userList[0].lastname }}</strong></h1>
+                                <p>Email: <strong>{{ userList[0].correo }}</strong></p>
+                                <p>Rol: <strong>{{ userList[0].rol }}</strong></p>
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <hr>
+                <h2 class="text-center">FUNCIONALIDADES</h2>
+                <hr>
+
+
+                <div class="row" *ngIf="userList[0].rol == 'ESTUDIANTE'">
+                    <div class="col-md-6">
+                        <div class="media">
+                            <div class="media-body">
+                                <div class="example-button-row">
+                                    <form class="example-container mt-4" [formGroup]="pinForm" (ngSubmit)="validar()" autocomplete="on">
+                                        <button mat-raised-button color="primary" (click)="openModal(template)">Consutar Notas</button>
+                                        <br><br>
+                                        <pre class="card card-block card-header">{{message}}</pre>
+                                        <ng-template #template>
+                                            <div class="modal-body text-center">
+                                                <mat-form-field class="example-full-width">
+                                                    <input matInput placeholder="Ingrese su pin de seguridad" name="pin" formControlName="pin">
+                                                </mat-form-field>
+
+                                                <p>Confirmar pin?</p>
+                                                <button type="button" class="btn btn-default" (click)="confirm()">Yes</button>
+                                                <button type="button" class="btn btn-primary" (click)="decline()">No</button>
+                                            </div>
+                                        </ng-template>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="media">
+                            <div class="media-body">
+                                <div class="example-button-row">
+                                    <form class="example-container mt-4" [formGroup]="pinForm" (ngSubmit)="validar()" autocomplete="on">
+                                        <button mat-raised-button color="primary" (click)="openModal(template)">Consutar Horario</button>
+                                        <br><br>
+                                        <pre class="card card-block card-header">{{message}}</pre>
+                                        <ng-template #template>
+                                            <div class="modal-body text-center">
+                                                <mat-form-field class="example-full-width">
+                                                    <input matInput placeholder="Ingrese su pin de seguridad" name="pin" formControlName="pin">
+                                                </mat-form-field>
+
+                                                <p>Confirmar pin?</p>
+                                                <button type="button" class="btn btn-default" (click)="confirm()">Yes</button>
+                                                <button type="button" class="btn btn-primary" (click)="decline()">No</button>
+                                            </div>
+                                        </ng-template>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="row" *ngIf="userList[0].rol == 'SECRETARIA'">
+                    <div class="col-md-6">
+                        <div class="media">
+                            <div class="media-body">
+                                <div class="example-button-row">
+                                    <form class="example-container mt-4" [formGroup]="pinForm" (ngSubmit)="validar()" autocomplete="on">
+                                        <button mat-raised-button color="warn" (click)="openModal(template)">Ingresar Notas</button>
+                                        <br><br>
+                                        <pre class="card card-block card-header">{{message}}</pre>
+                                        <ng-template #template>
+                                            <div class="modal-body text-center">
+                                                <mat-form-field class="example-full-width">
+                                                    <input matInput placeholder="Ingrese su pin de seguridad" name="pin" formControlName="pin">
+                                                </mat-form-field>
+
+                                                <p>Confirmar pin?</p>
+                                                <button type="button" class="btn btn-default" (click)="confirm()">Yes</button>
+                                                <button type="button" class="btn btn-primary" (click)="decline()">No</button>
+                                            </div>
+                                        </ng-template>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="media">
+                            <div class="media-body">
+                                <div class="example-button-row">
+                                    <form class="example-container mt-4" [formGroup]="pinForm" (ngSubmit)="validar()" autocomplete="on">
+                                        <button mat-raised-button color="warn" (click)="openModal(template)">Asignar docentes</button>
+                                        <br><br>
+                                        <pre class="card card-block card-header">{{message}}</pre>
+                                        <ng-template #template>
+                                            <div class="modal-body text-center">
+                                                <mat-form-field class="example-full-width">
+                                                    <input matInput placeholder="Ingrese su pin de seguridad" name="pin" formControlName="pin">
+                                                </mat-form-field>
+
+                                                <p>Confirmar pin?</p>
+                                                <button type="button" class="btn btn-default" (click)="confirm()">Yes</button>
+                                                <button type="button" class="btn btn-primary" (click)="decline()">No</button>
+                                            </div>
+                                        </ng-template>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+                <div class="row" *ngIf="userList[0].rol == 'ADMINISTRADOR'">
+                    <div class="col-md-6">
+                        <div class="media">
+                            <div class="media-body">
+                                <div class="example-button-row">
+                                    <form class="example-container mt-4" [formGroup]="pinForm" (ngSubmit)="validar()" autocomplete="on">
+                                        <button mat-raised-button color="accent" routerLink="/register-user">Registrar usuarios</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="media">
+                            <div class="media-body">
+                                <div class="example-button-row">
+                                    <form class="example-container mt-4" [formGroup]="pinForm" (ngSubmit)="validar()" autocomplete="on">
+                                        <button mat-raised-button color="accent" (click)="openModal(template)">Asignar roles</button>
+                                        <br><br>
+                                        <pre class="card card-block card-header">{{message}}</pre>
+                                        <ng-template #template>
+                                            <div class="modal-body text-center">
+                                                <mat-form-field class="example-full-width">
+                                                    <input matInput placeholder="Ingrese su pin de seguridad" name="pin" formControlName="pin">
+                                                </mat-form-field>
+
+                                                <p>Confirmar pin?</p>
+                                                <button type="button" class="btn btn-default" (click)="confirm()">Yes</button>
+                                                <button type="button" class="btn btn-primary" (click)="decline()">No</button>
+                                            </div>
+                                        </ng-template>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+                <div class="row" *ngIf="userList[0].rol == 'DOCENTE'">
+                    <div class="col-md-6">
+                        <div class="media">
+                            <div class="media-body">
+                                <div class="example-button-row">
+                                    <form class="example-container mt-4" [formGroup]="pinForm" (ngSubmit)="validar()" autocomplete="on">
+                                        <button mat-raised-button color="accent" (click)="openModal(template)">Calificar examenes</button>
+                                        <br><br>
+                                        <pre class="card card-block card-header">{{message}}</pre>
+                                        <ng-template #template>
+                                            <div class="modal-body text-center">
+                                                <mat-form-field class="example-full-width">
+                                                    <input matInput placeholder="Ingrese su pin de seguridad" name="pin" formControlName="pin">
+                                                </mat-form-field>
+
+                                                <p>Confirmar pin?</p>
+                                                <button type="button" class="btn btn-default" (click)="confirm()">Yes</button>
+                                                <button type="button" class="btn btn-primary" (click)="decline()">No</button>
+                                            </div>
+                                        </ng-template>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="media">
+                            <div class="media-body">
+                                <div class="example-button-row">
+                                    <form class="example-container mt-4" [formGroup]="pinForm" (ngSubmit)="validar()" autocomplete="on">
+                                        <button mat-raised-button color="accent" (click)="openModal(template)">Asistencia</button>
+                                        <br><br>
+                                        <pre class="card card-block card-header">{{message}}</pre>
+                                        <ng-template #template>
+                                            <div class="modal-body text-center">
+                                                <mat-form-field class="example-full-width">
+                                                    <input matInput placeholder="Ingrese su pin de seguridad" name="pin" formControlName="pin">
+                                                </mat-form-field>
+
+                                                <p>Confirmar pin?</p>
+                                                <button type="button" class="btn btn-default" (click)="confirm()">Yes</button>
+                                                <button type="button" class="btn btn-primary" (click)="decline()">No</button>
+                                            </div>
+                                        </ng-template>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
                 </div>
 
             </div>

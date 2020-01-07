@@ -1,0 +1,24 @@
+<div class="displayTable">
+    <div class="displayTableCell">
+
+        <div class="authBlock">
+            <h3>¿Con qué rol va a ingresar?</h3>
+
+            <form class="example-container mt-4" [formGroup]="rolForm" (ngSubmit)="elegirRol()" autocomplete="on">
+                <mat-form-field>
+                    <mat-label>Rol</mat-label>
+                    <mat-select formControlName="rol">
+                        <mat-option *ngFor="let rol of rolesList[0]" [value]="rol.name">
+                            {{ rol.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-card-actions>
+                    <button class="btn btn-success btn-block" type="submit" [disabled]="!rolForm.valid">Elegir Rol</button>
+                </mat-card-actions>
+            </form>
+        </div>
+
+    </div>
+</div>
